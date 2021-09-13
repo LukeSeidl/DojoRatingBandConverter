@@ -63,36 +63,35 @@ export class AppComponent {
           }
         }
       });
-      
-      
     }
     if (this.chessComUserID != "") {
-      var c_results = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];//getChessComUserData(this.chessComUserID);
-      c_bullet = c_results[0];
-      c_bulletRD = c_results[1];
-      c_blitz = c_results[2];
-      c_blitzRD = c_results[3];
-      c_rapid = c_results[4];
-      c_rapidRD = c_results[5];
-      if (this.C_MESSAGE != "User does not exist") {
-        var c_ratingsUsed = 'Ratings used: ';
-        if (c_bulletRD < 150) {
-          c_ratingsUsed += 'Bullet: ' + c_bullet + ', ';
+      this.getChessComUserData(this.chessComUserID).then(c_results => {
+        c_bullet = c_results[0];
+        c_bulletRD = c_results[1];
+        c_blitz = c_results[2];
+        c_blitzRD = c_results[3];
+        c_rapid = c_results[4];
+        c_rapidRD = c_results[5];
+        if (this.C_MESSAGE != "User does not exist") {
+          var c_ratingsUsed = 'Ratings used: ';
+          if (c_bulletRD < 150) {
+            c_ratingsUsed += 'Bullet: ' + c_bullet + ', ';
+          }
+          if (c_blitzRD < 150) {
+            c_ratingsUsed += 'Blitz: ' + c_blitz + ', ';
+          }
+          if (c_rapidRD < 150) {
+            c_ratingsUsed += 'Rapid: ' + c_rapid + ', ';
+          }
+          if (c_bulletRD < 150 || c_blitzRD < 150 || c_rapidRD < 150) {
+            c_ratingsUsed = c_ratingsUsed.substring(0, c_ratingsUsed.length - 2);
+            this.C_MESSAGE = c_ratingsUsed;
+          }
+          else {
+            this.C_MESSAGE = 'User has no eligible ratings';
+          }
         }
-        if (c_blitzRD < 150) {
-          c_ratingsUsed += 'Blitz: ' + c_blitz + ', ';
-        }
-        if (c_rapidRD < 150) {
-          c_ratingsUsed += 'Rapid: ' + c_rapid + ', ';
-        }
-        if (c_bulletRD < 150 || c_blitzRD < 150 || c_rapidRD < 150) {
-          c_ratingsUsed = c_ratingsUsed.substring(0, c_ratingsUsed.length - 2);
-          this.C_MESSAGE = c_ratingsUsed;
-        }
-        else {
-          this.C_MESSAGE = 'User has no eligible ratings';
-        }
-      }
+      });
     }
     var uscfEstimate = "0";//estimateUSCFFromLichessAndChessCom(l_bullet, l_bulletRD, l_blitz, l_blitzRD, l_rapid, l_rapidRD, l_classical, l_classicalRD, c_bullet, c_bulletRD, c_blitz, c_blitzRD, c_rapid, c_rapidRD);
     if (uscfEstimate != "0") {
@@ -103,7 +102,6 @@ export class AppComponent {
   async getLichessUserData(userID: string) {
     this.L_MESSAGE = "";
     var result = await fetch("http://lichess.org/api/user/" + userID + "?callback=JSON_CALLBACK").then(response => response.json()).then(data => {
-      console.log(data);
       if (data['perfs'] == undefined) {
         this.L_MESSAGE = "User does not exist";
         return [0, 500, 0, 500, 0, 500, 0, 500];
@@ -126,6 +124,51 @@ export class AppComponent {
     }).catch(() => {
       this.L_MESSAGE = "User does not exist";
       return [0, 500, 0, 500, 0, 500, 0, 500];
+    });
+    return result;
+  }
+
+  async getChessComUserData(userID: string) {
+    this.C_MESSAGE = "";
+    var result = await fetch("https://api.chess.com/pub/player/" + userID + "/stats").then(response => response.json()).then(data => {
+      try {
+        if (data['code'] == 0) {
+          this.C_MESSAGE = "User does not exist";
+          return [0, 500, 0, 500, 0, 500];
+        }
+      }
+      catch(e) {}
+      try {
+        var bullet = parseInt(data['chess_bullet']['last']['rating']);
+        var bulletRD = parseInt(data['chess_bullet']['last']['rd']);
+      }
+      catch (e) {
+        var bullet = 0;
+        var bulletRD = 500;
+      }
+      try {
+        var blitz = parseInt(data['chess_blitz']['last']['rating']);
+        var blitzRD = parseInt(data['chess_blitz']['last']['rd']);
+      }
+      catch (e) {
+        var blitz = 0;
+        var blitzRD = 500;
+      }
+      try {
+        var rapid = parseInt(data['chess_rapid']['last']['rating']);
+        var rapidRD = parseInt(data['chess_rapid']['last']['rd']);
+      }
+      catch (e) {
+        var rapid = 0;
+        var rapidRD = 500;
+      }
+      bullet = bulletRD < 150 ? bullet : 0;
+      blitz = blitzRD < 150 ? blitz : 0;
+      rapid = rapidRD < 150 ? rapid : 0;
+      return [bullet, bulletRD, blitz, blitzRD, rapid, rapidRD];
+    }).catch(() => {
+      this.C_MESSAGE = "User does not exist";
+      return [0, 500, 0, 500, 0, 500];
     });
     return result;
   }
