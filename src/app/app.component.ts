@@ -134,7 +134,7 @@ C_USCF = [100,285,285,300,575,700,835,1010,1070,1115,1155,1235,1290,1340,1395,14
 
   async getLichessUserData(userID: string) {
     this.L_MESSAGE = "";
-    var result = await fetch("http://lichess.org/api/user/" + userID + "?callback=JSON_CALLBACK").then(response => response.json()).then(data => {
+    var result = await fetch("https://lichess.org/api/user/" + userID + "?callback=JSON_CALLBACK").then(response => response.json()).then(data => {
       if (data['perfs'] == undefined) {
         this.L_MESSAGE = "User does not exist";
         return [0, 500, 0, 500, 0, 500, 0, 500];
