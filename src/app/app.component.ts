@@ -27,6 +27,16 @@ export class AppComponent {
   c_rapidRD = 500;
   returned = 0;
   requested = 0;
+  L_BULLET = [100,810,885,940,1010,1060,1135,1235,1295,1335,1400,1450,1495,1525,1590,1630,1670,1705,1750,1785,1810,1850,1900,1945,2000,2020,2105,2180,2265,2365,2455,2540,3000]
+L_BLITZ = [100,845,920,1000,1090,1195,1275,1365,1420,1480,1530,1585,1625,1665,1700,1735,1780,1815,1860,1885,1910,1950,1995,2015,2050,2075,2145,2215,2290,2390,2450,2530,3000]
+L_RAPID = [100,985,1125,1185,1285,1380,1480,1550,1600,1625,1670,1705,1735,1785,1815,1840,1865,1895,1930,1955,1995,2010,2040,2060,2085,2110,2170,2205,2240,2300,2395,2455,3000]
+L_CLASSICAL = [100,1065,1120,1255,1355,1445,1530,1590,1620,1660,1705,1730,1755,1785,1805,1825,1855,1890,1925,1940,1960,1990,2020,2040,2055,2070,2090,2165,2195,2285,2310,2375,3000]
+L_USCF = [100,285,285,300,575,700,835,1010,1070,1115,1155,1235,1290,1340,1395,1470,1505,1550,1605,1640,1705,1750,1805,1850,1880,1915,2010,2105,2200,2255,2295,2425,3000]
+C_BULLET = [100,495,590,670,755,835,930,1040,1095,1130,1185,1235,1285,1330,1380,1425,1485,1535,1595,1640,1700,1755,1815,1860,1915,1965,2070,2180,2290,2405,2505,2615,2720,2815,3000]
+C_BLITZ =  [100,500,600,700,800,900,1000,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000,2100,2200,2300,2400,2500,2600,2700,2800,3000]
+C_RAPID = [100,685,790,890,985,1075,1165,1245,1295,1330,1375,1420,1460,1505,1545,1580,1615,1645,1685,1720,1760,1790,1825,1860,1900,1930,2005,2060,2130,2210,2290,2395,2490,2605,3000]
+C_USCF = [100,285,285,300,575,700,835,1010,1070,1115,1155,1235,1290,1340,1395,1470,1505,1550,1605,1640,1705,1750,1805,1850,1880,1915,2010,2105,2200,2255,2295,2425,2535,2565,3000]
+
 
   estimateUSCF() {
     this.L_MESSAGE = "";
@@ -197,8 +207,8 @@ export class AppComponent {
   }
 
   estimateUSCFFromLichessAndChessCom() {
-    return 0;
-    /*if (this.returned == this.requested) {
+    var uscfEstimate = 0;
+    if (this.returned == this.requested) {
       var numRatings = 0;
       var l_bulletEstimate = 0;
       var l_blitzEstimate = 0;
@@ -217,7 +227,7 @@ export class AppComponent {
       var c_rapidWeight = 1 - (this.c_rapidRD / totalRD);
       if (this.l_bullet >= 100 && this.l_bullet <= 3000) {
         numRatings += 1;
-        var highLowResult = getHighLow(this.L_BULLET, this.l_bullet);
+        var highLowResult = this.getHighLow(this.L_BULLET, this.l_bullet);
         var l_bulletLow = highLowResult[0];
         var l_bulletHigh = highLowResult[1];
         var L = this.L_BULLET[l_bulletLow];
@@ -232,7 +242,7 @@ export class AppComponent {
     
       if (this.l_blitz >= 100 && this.l_blitz <= 3000) {
         numRatings += 1;
-        var highLowResult = getHighLow(this.L_BLITZ, this.l_blitz);
+        var highLowResult = this.getHighLow(this.L_BLITZ, this.l_blitz);
         var l_blitzLow = highLowResult[0];
         var l_blitzHigh = highLowResult[1];
         var L = this.L_BLITZ[l_blitzLow];
@@ -247,7 +257,7 @@ export class AppComponent {
 
       if (this.l_rapid >= 100 && this.l_rapid <= 3000) {
         numRatings += 1;
-        var highLowResult = getHighLow(this.L_RAPID, this.l_rapid);
+        var highLowResult = this.getHighLow(this.L_RAPID, this.l_rapid);
         var l_rapidLow = highLowResult[0];
         var l_rapidHigh = highLowResult[1];
         var L = this.L_RAPID[l_rapidLow];
@@ -262,7 +272,7 @@ export class AppComponent {
       if (this.l_classical >= 100 && this.l_classical <= 3000)
       {
         numRatings += 1;
-        var highLowResult = getHighLow(this.L_CLASSICAL, this.l_classical);
+        var highLowResult = this.getHighLow(this.L_CLASSICAL, this.l_classical);
         var l_classicalLow = highLowResult[0];
         var l_classicalHigh = highLowResult[1];
         var L = this.L_CLASSICAL[l_classicalLow];
@@ -275,13 +285,15 @@ export class AppComponent {
         l_classicalWeight = 0;
       }
 
-      if (c_bullet >= 100 and c_bullet <= 3000)
+      if (this.c_bullet >= 100 && this.c_bullet <= 3000)
       {
-        numRatings += 1
-        c_bulletLow, c_bulletHigh = getHighLow(C_BULLET, c_bullet)
-        L = C_BULLET[c_bulletLow]
-        H = C_BULLET[c_bulletHigh]
-        c_bulletEstimate = (C_USCF[c_bulletLow] * (H - L - (c_bullet - L)) / (H - L)) + (C_USCF[c_bulletHigh] * (H - L - (H - c_bullet)) / (H - L))
+        numRatings += 1;
+        var highLowResult = this.getHighLow(this.C_BULLET, this.c_bullet);
+        var c_bulletLow = highLowResult[0];
+        var c_bulletHigh = highLowResult[1];
+        var L = this.C_BULLET[c_bulletLow]
+        var H = this.C_BULLET[c_bulletHigh]
+        c_bulletEstimate = (this.C_USCF[c_bulletLow] * (H - L - (this.c_bullet - L)) / (H - L)) + (this.C_USCF[c_bulletHigh] * (H - L - (H - this.c_bullet)) / (H - L))
         c_bulletEstimate = c_bulletEstimate * c_bulletWeight
       }
       else
@@ -290,14 +302,16 @@ export class AppComponent {
       }
 
 
-      if (c_blitz >= 100 and c_blitz <= 3000)
+      if (this.c_blitz >= 100 && this.c_blitz <= 3000)
       {
-        numRatings += 1
-        c_blitzLow, c_blitzHigh = getHighLow(C_BLITZ, c_blitz)
-        L = C_BLITZ[c_blitzLow]
-        H = C_BLITZ[c_blitzHigh]
-        c_blitzEstimate = (C_USCF[c_blitzLow] * (H - L - (c_blitz - L)) / (H - L)) + (C_USCF[c_blitzHigh] * (H - L - (H - c_blitz)) / (H - L))
-        c_blitzEstimate = c_blitzEstimate * c_blitzWeight
+        numRatings += 1;
+        var highLowResult = this.getHighLow(this.C_BLITZ, this.c_blitz);
+        var c_blitzLow = highLowResult[0];
+        var c_blitzHigh = highLowResult[1];
+        var L = this.C_BLITZ[c_blitzLow];
+        var H = this.C_BLITZ[c_blitzHigh];
+        c_blitzEstimate = (this.C_USCF[c_blitzLow] * (H - L - (this.c_blitz - L)) / (H - L)) + (this.C_USCF[c_blitzHigh] * (H - L - (H - this.c_blitz)) / (H - L))
+        c_blitzEstimate = c_blitzEstimate * c_blitzWeight;
       }
       else
       {
@@ -305,69 +319,56 @@ export class AppComponent {
       }
       
 
-      if (c_rapid >= 100 and c_rapid <= 3000)
+      if (this.c_rapid >= 100 && this.c_rapid <= 3000)
       {
-        numRatings += 1
-        c_rapidLow, c_rapidHigh = getHighLow(C_RAPID, c_rapid)
-        L = C_RAPID[c_rapidLow]
-        H = C_RAPID[c_rapidHigh]
-        c_rapidEstimate = (C_USCF[c_rapidLow] * (H - L - (c_rapid - L)) / (H - L)) + (C_USCF[c_rapidHigh] * (H - L - (H - c_rapid)) / (H - L))
-        c_rapidEstimate = c_rapidEstimate * c_rapidWeight
+        numRatings += 1;
+        var highLowResult = this.getHighLow(this.C_RAPID, this.c_rapid);
+        var c_rapidLow = highLowResult[0];
+        var c_rapidHigh = highLowResult[1];
+        var L = this.C_RAPID[c_rapidLow]
+        var H = this.C_RAPID[c_rapidHigh]
+        c_rapidEstimate = (this.C_USCF[c_rapidLow] * (H - L - (this.c_rapid - L)) / (H - L)) + (this.C_USCF[c_rapidHigh] * (H - L - (H - this.c_rapid)) / (H - L))
+        c_rapidEstimate = c_rapidEstimate * c_rapidWeight;
       }
       else
       {
-        c_rapidWeight = 0
+        c_rapidWeight = 0;
       }
 
-      if numRatings > 0 {
-        totalEstimate = l_bulletEstimate + l_blitzEstimate + l_rapidEstimate + l_classicalEstimate + c_bulletEstimate + c_blitzEstimate + c_rapidEstimate
-        totalWeight = l_bulletWeight + l_blitzWeight + l_rapidWeight + l_classicalWeight + c_bulletWeight + c_blitzWeight + c_rapidWeight
-        uscfEstimate = totalEstimate / totalWeight
-        return round(uscfEstimate)
+      if (numRatings > 0) {
+        var totalEstimate = l_bulletEstimate + l_blitzEstimate + l_rapidEstimate + l_classicalEstimate + c_bulletEstimate + c_blitzEstimate + c_rapidEstimate;
+        var totalWeight = l_bulletWeight + l_blitzWeight + l_rapidWeight + l_classicalWeight + c_bulletWeight + c_blitzWeight + c_rapidWeight;
+        uscfEstimate = totalEstimate / totalWeight;
+        uscfEstimate = Math.round(uscfEstimate);
       }
       else {
-        return 0;
+        uscfEstimate = 0
       }
       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       if (uscfEstimate != 0) {
         this.uscfEstimate = uscfEstimate.toString();
       }
-    }*/
+    }
   }
 
-  /*def getHighLow(timeControl, currentRating):
-        low = -1
-        high = 0
-        for count, rating in enumerate(timeControl):
-            if(currentRating >= rating):
-                low = count
-                if(len(timeControl) > count + 1):
-                    high = count + 1
-                else:
-                    high = -1
-            else:
-                break
-        return (low,high)*/
+  getHighLow(timeControl: Array<number>, currentRating: number){
+        var low = -1;
+        var high = 0;
+        for (var i = 0; i < timeControl.length; i++){
+          if(currentRating >= timeControl[i]){
+            low = i;
+            if(timeControl.length > i + 1){
+              high = i + 1
+            } 
+            else{
+              high = -1
+            }
+          }
+          else{
+            break;
+          }     
+        }
+        return [low,high]
+  }
       
 }
