@@ -1,5 +1,5 @@
-# OTBRatingEstimator
-This is a web app to estimate USCF ratings based off of lichess and/or chess.com ratings.
+# DojoRatingBandConverter
+This is a web app to estimate FIDE rating from USCF, ChessCom, and/or Lichess based on the Chess Dojo Rating Bands.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.5.
 

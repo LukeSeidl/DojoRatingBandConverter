@@ -310,47 +310,21 @@
 
 <!-- Toolbar -->
 <div class="toolbar" role="banner">
-  <span style="padding-left: 5%">Over the Board Chess Rating Estimator</span>
+  <span style="padding-left: 5%">FIDE Rating Estimator</span>
 </div>
 
 <div class="content" role="main">
   <!-- Resources -->
   <!--<h1>UNDER CONSTRUCTION!</h1>-->
-  <h2>Estimate USCF Rating:</h2>
-  <p>Enter a Lichess and/or a Chess.com Username to estimate the user's USCF rating</p>
-  <form (submit)="estimateUSCF()" onsubmit="return false">
+  <h2>Estimate FIDE Rating:</h2>
+  <p>Enter your USCF ID, Lichess Username and/or Chess.com Username to estimate your FIDE rating and appropriate Dojo Rating Band.</p>
+  <form (submit)="estimateFIDE()" onsubmit="return false">
     <div class="grid-container" style="width: 100%; text-align: center;">
       <div style="padding-top: 3%; padding-bottom: 3%">
         <label style="font-weight: bold">
           Lichess Username:
         </label>
         <input type="text" name="LichessUsername" id="LichessUsername" [(ngModel)]="lichessUserID" />
-        <div style="margin-top: 2%">
-          <label style="font-weight: bold">Exclude: </label>
-          <input type="checkbox"
-                 [(ngModel)]="xl_bullet"
-                 [ngModelOptions]="{standalone: true}"
-                 style="margin-right:1%" />
-          <label [ngStyle]="{color: xl_bullet ? 'red' : 'black'}">Bullet</label>
-
-          <input type="checkbox"
-                 [(ngModel)]="xl_blitz"
-                 [ngModelOptions]="{standalone: true}"
-                 style="margin-right:1%" />
-          <label [ngStyle]="{color: xl_blitz ? 'red' : 'black'}">Blitz</label>
-
-          <input type="checkbox"
-                 [(ngModel)]="xl_rapid"
-                 [ngModelOptions]="{standalone: true}"
-                 style="margin-right:1%" />
-          <label [ngStyle]="{color: xl_rapid ? 'red' : 'black'}">Rapid</label>
-
-          <input type="checkbox"
-                 [(ngModel)]="xl_classical"
-                 [ngModelOptions]="{standalone: true}"
-                 style="margin-right:1%" />
-          <label [ngStyle]="{color: xl_classical ? 'red' : 'black'}">Classical</label>
-        </div>
         <p style="margin-top: 2%">{{L_MESSAGE}}</p>
       </div>
       <div style="margin-top: 5%; padding-bottom: 3%">
@@ -358,35 +332,20 @@
           Chess.com Username:
         </label>
         <input type="text" name="ChessComUsername" id="ChessComUsername" [(ngModel)]="chessComUserID" />
-        <div style="margin-top: 2%">
-          <label style="font-weight: bold">Exclude: </label>
-
-          <input type="checkbox"
-                 [(ngModel)]="xc_bullet"
-                 [ngModelOptions]="{standalone: true}"
-                 style="margin-right:1%" />
-          <label [ngStyle]="{color: xc_bullet ? 'red' : 'black'}">Bullet</label>
-
-          <input type="checkbox"
-                 [(ngModel)]="xc_blitz"
-                 [ngModelOptions]="{standalone: true}"
-                 style="margin-right:1%" />
-          <label [ngStyle]="{color: xc_blitz ? 'red' : 'black'}">Blitz</label>
-
-          <input type="checkbox"
-                 [(ngModel)]="xc_rapid"
-                 [ngModelOptions]="{standalone: true}"
-                 style="margin-right:1%" />
-          <label [ngStyle]="{color: xc_rapid ? 'red' : 'black'}">Rapid</label>
-
-        </div>
         <p style="margin-top: 2%">{{C_MESSAGE}}</p>
+      </div>
+      <div style="margin-top: 5%; padding-bottom: 3%">
+        <label style="font-weight: bold">
+          USCF ID:
+        </label>
+        <input type="text" name="USCFID" id="USCFID" [(ngModel)]="USCFID" />
+        <p style="margin-top: 2%">{{U_MESSAGE}}</p>
       </div>
       <div style="margin-top: 5%; padding-bottom: 3%">
         <button type="submit">Estimate</button>
       </div>
       <div>
-        <p><strong>USCF Rating Estimate:</strong> {{uscfEstimate}}</p>
+        <p><strong>FIDE Rating Estimate:</strong> {{fideEstimate}}</p>
       </div>
     </div>
   </form>
