@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": ["../../Users/lukeseidl/DojoRatingBandConverter/netlify/functions/getUSCFDataByID.ts"],
+  "sourceRoot": "/tmp/tmp-15978-MpEkRMmbxbf6",
+  "sourcesContent": ["import { Handler } from \"@netlify/functions\";\n\nconst handler: Handler = async (event, context) => {\n    var userID = event.queryStringParameters != null ? event.queryStringParameters.id : 0;\n    var result = await fetch(\"http://www.uschess.org/msa/thin.php?\" + userID).then(response => response.json()).then(data => {\n        var body = data;\n        return {\n            statusCode: 200,\n            body: body,\n        };\n    });\n    return {\n        statusCode: 200,\n        body: JSON.stringify({ message: \"Hello World\"}),\n    };\n};\n\nexport { handler };"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAEA,IAAM,UAAmB,OAAO,OAAO,YAAY;AAC/C,MAAI,SAAS,MAAM,yBAAyB,OAAO,MAAM,sBAAsB,KAAK;AACpF,MAAI,SAAS,MAAM,MAAM,yCAAyC,MAAM,EAAE,KAAK,cAAY,SAAS,KAAK,CAAC,EAAE,KAAK,UAAQ;AACrH,QAAI,OAAO;AACX,WAAO;AAAA,MACH,YAAY;AAAA,MACZ;AAAA,IACJ;AAAA,EACJ,CAAC;AACD,SAAO;AAAA,IACH,YAAY;AAAA,IACZ,MAAM,KAAK,UAAU,EAAE,SAAS,cAAa,CAAC;AAAA,EAClD;AACJ;",
+  "names": []
+}

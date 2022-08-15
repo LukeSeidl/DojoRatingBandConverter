@@ -345,7 +345,16 @@
         <button type="submit">Estimate</button>
       </div>
       <div>
-        <p><strong>FIDE Rating Estimate:</strong> {{fideEstimate}}</p>
+        <p *ngIf="isLoading == false && fideEstimate != ''"><strong>FIDE Rating Estimate:</strong> 
+          {{fideEstimate}}
+        </p>
+        <p *ngIf="isLoading == false && fideEstimate != ''"><strong>Dojo Rating Band:</strong> 
+          {{dojoRatingBand}}
+        </p>
+        <p *ngIf="isLoading == true"><strong>FIDE Rating Estimate:</strong> 
+          Loading...
+        </p>
+        
       </div>
     </div>
   </form>

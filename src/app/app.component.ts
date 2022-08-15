@@ -5,7 +5,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent{
-  title = 'OTBRatingEstimator';
+  title = 'DojoRatingBandEstimator';
+  isLoading = false;
   lichessUserID = "";
   chessComUserID = "";
   USCFID = "";
@@ -13,6 +14,7 @@ export class AppComponent{
   L_MESSAGE = "";
   C_MESSAGE = "";
   U_MESSAGE = "";
+  dojoRatingBand = "";
   l_classical = 0;
   c_rapid = 0;
   u_classical = 0;
@@ -21,12 +23,18 @@ export class AppComponent{
   L_CLASSICAL = [600,1100,1225,1290,1350,1415,1475,1575,1675,1750,1825,1900,2000,2075,2150,2225,2300,2375,2450,2525,2600,3000];
   C_RAPID =     [100,650,  850, 950,1050,1150,1250,1350,1450,1550,1650,1750,1850,1950,2050,2150,2250,2350,2425,2525,2600,3000];
   U_CLASSICAL = [0,  450,  650, 750, 850, 950,1050,1150,1250,1350,1450,1550,1650,1775,1875,1975,2100,2200,2300,2400,2500,3000];
-  F_CLASSICAL=  [0,  400,  600, 700, 800, 900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,3000]
-
+  F_CLASSICAL =  [0,  400,  600, 700, 800, 900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,3000]
   estimateFIDE() {
+    if(this.lichessUserID != "" || this.chessComUserID != "" || this.USCFID != ""){
+      this.isLoading = true;
+    }
+    else {
+      return;
+    }
     this.L_MESSAGE = "";
     this.C_MESSAGE = "";
     this.U_MESSAGE = "";
+    this.dojoRatingBand = "";
     this.l_classical = 0;
     this.c_rapid = 0;
     this.u_classical = 0;
@@ -77,20 +85,26 @@ export class AppComponent{
       });
     }
     if (this.USCFID != "") {
-      this.getUSCFUserData(this.USCFID).then(u_results => {
-        this.u_classical = u_results;
-        if (this.U_MESSAGE != "User does not exist") {
-          if (this.u_classical > 0) {
-            var u_ratingsUsed = 'Rapid: ' + this.c_rapid;
-            this.U_MESSAGE =  u_ratingsUsed;
-          }
-          else {
-            this.U_MESSAGE = 'User has no eligible ratings';
+      var result = fetch('/.netlify/functions/getUSCFDataByID?id=' + this.USCFID).then(response => response.json()).then(u_results => {
+        if(u_results.body == "User does not exist"){
+          this.U_MESSAGE = "User does not exist";
+        }
+        else{
+          this.u_classical = u_results.body;
+          console.log(this.u_classical);
+          if (this.U_MESSAGE != "User does not exist") {
+            if (this.u_classical > 0) {
+              var u_ratingsUsed = 'Classical: ' + this.u_classical;
+              this.U_MESSAGE =  u_ratingsUsed;
+            }
+            else {
+              this.U_MESSAGE = 'User has no eligible ratings';
+            }
           }
         }
         this.returned += 1;
         this.estimateFIDEFromLichessChessComAndUSCF();
-      });
+      })
     }
   }
 
@@ -133,22 +147,6 @@ export class AppComponent{
       return 0;
     });
     return result;
-  }
-
-  async getUSCFUserData(userID: string) {
-    this.U_MESSAGE = "";
-    try{
-      var result = await fetch("http://www.uschess.org/msa/thin.php?" + userID).then(response => response.json()).then(data => {
-        var body = data;
-        console.log(body);
-      });
-    }
-    catch(x){
-      console.log(x);
-      this.U_MESSAGE = "User does not exist";
-      return 0;
-    };
-    return 0; //result;
   }
 
   estimateFIDEFromLichessChessComAndUSCF() {
@@ -199,8 +197,9 @@ export class AppComponent{
         var highLowResult = this.getHighLow(this.U_CLASSICAL, this.u_classical);
         var u_classicalLow = highLowResult[0];
         var u_classicalHigh = highLowResult[1];
+        console.log(u_classicalLow + " " + u_classicalHigh);
         var L = this.U_CLASSICAL[u_classicalLow];
-        var H = this.C_RAPID[u_classicalHigh];
+        var H = this.U_CLASSICAL[u_classicalHigh];
         u_classicalEstimate = (this.F_CLASSICAL[u_classicalLow] * (H - L - (this.u_classical - L)) / (H - L)) + (this.F_CLASSICAL[u_classicalHigh] * (H - L - (H - this.u_classical)) / (H - L));
         u_classicalEstimate = u_classicalEstimate * u_classicalWeight;
       }
@@ -211,7 +210,8 @@ export class AppComponent{
 
       if (numRatings > 0) {
         var totalEstimate = l_classicalEstimate + c_rapidEstimate + u_classicalEstimate;
-        var totalWeight = l_classicalWeight + c_rapidWeight + u_classicalEstimate;
+        var totalWeight = l_classicalWeight + c_rapidWeight + u_classicalWeight;
+        console.log(totalEstimate + " " + totalWeight);
         fideEstimate = totalEstimate / totalWeight;
         fideEstimate = Math.round(fideEstimate);
       }
@@ -220,8 +220,23 @@ export class AppComponent{
       }
       
       if (fideEstimate != 0) {
+        if(fideEstimate < 400){
+          this.dojoRatingBand = "0-400";
+        }
+        else if(fideEstimate < 600){
+          this.dojoRatingBand = "400-600";
+        }
+        else if(fideEstimate >= 2400){
+          this.dojoRatingBand = "2400+";
+        }
+        else{
+          var lower = Math.floor(fideEstimate/100);
+          this.dojoRatingBand = lower + "00-" + (lower+1) + "00"; 
+        }
         this.fideEstimate = fideEstimate.toString();
+        
       }
+      this.isLoading = false;
     }
   }
 
