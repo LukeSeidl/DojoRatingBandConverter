@@ -325,26 +325,26 @@
           Lichess Username:
         </label>
         <input type="text" name="LichessUsername" id="LichessUsername" [(ngModel)]="lichessUserID" />
-        <p style="margin-top: 2%">{{L_MESSAGE}}</p>
+        <p style="margin-top: 2%; text-align: center;">{{L_MESSAGE}}</p>
       </div>
       <div style="margin-top: 5%; padding-bottom: 3%">
         <label style="font-weight: bold">
           Chess.com Username:
         </label>
         <input type="text" name="ChessComUsername" id="ChessComUsername" [(ngModel)]="chessComUserID" />
-        <p style="margin-top: 2%">{{C_MESSAGE}}</p>
+        <p style="margin-top: 2%; text-align: center;">{{C_MESSAGE}}</p>
       </div>
       <div style="margin-top: 5%; padding-bottom: 3%">
         <label style="font-weight: bold">
           USCF ID:
         </label>
         <input type="text" name="USCFID" id="USCFID" [(ngModel)]="USCFID" />
-        <p style="margin-top: 2%">{{U_MESSAGE}}</p>
+        <p style="margin-top: 2%; text-align: center;">{{U_MESSAGE}}</p>
       </div>
       <div style="margin-top: 5%; padding-bottom: 3%; text-align: center;">
         <button type="submit">Estimate</button>
       </div>
-      <div>
+      <div style="margin-top: 2%; text-align: center;">
         <p *ngIf="isLoading == false && fideEstimate != ''"><strong>FIDE Rating Estimate:</strong> 
           {{fideEstimate}}
         </p>
