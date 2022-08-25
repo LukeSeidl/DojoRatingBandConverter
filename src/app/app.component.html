@@ -319,7 +319,7 @@
   <h2>Estimate FIDE Rating:</h2>
   <p>Enter your USCF ID, Lichess Username and/or Chess.com Username to estimate your FIDE rating and appropriate Dojo Rating Band.</p>
   <form (submit)="estimateFIDE()" onsubmit="return false">
-    <div class="grid-container" style="width: 100%; text-align: center;">
+    <div class="grid-container" style="width: 100%; text-align: right;">
       <div style="padding-top: 3%; padding-bottom: 3%">
         <label style="font-weight: bold">
           Lichess Username:
@@ -341,7 +341,7 @@
         <input type="text" name="USCFID" id="USCFID" [(ngModel)]="USCFID" />
         <p style="margin-top: 2%">{{U_MESSAGE}}</p>
       </div>
-      <div style="margin-top: 5%; padding-bottom: 3%">
+      <div style="margin-top: 5%; padding-bottom: 3%; text-align: center;">
         <button type="submit">Estimate</button>
       </div>
       <div>
